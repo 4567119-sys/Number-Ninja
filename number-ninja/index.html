@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Number Ninja 🥷</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="light-mode">
+
+  <!-- =====================================================
+       START SCREEN
+  ====================================================== -->
+  <div id="start-screen" class="screen active">
+    <div class="start-card">
+
+      <button id="theme-toggle" class="theme-btn" title="Toggle dark/light mode">🌙</button>
+
+      <div class="ninja-logo">🥷</div>
+      <h1 class="game-title">Number Ninja</h1>
+      <p class="game-subtitle">Master the math. Become the Ninja!</p>
+
+      <!-- Daily Challenge banner -->
+      <div class="daily-section">
+        <div id="daily-banner" class="daily-banner">📅 Daily Challenge available!</div>
+        <button id="daily-btn" class="btn btn-daily">⚡ Play Daily</button>
+      </div>
+
+      <!-- Difficulty selector -->
+      <div class="difficulty-section">
+        <p class="section-label">Choose Your Level</p>
+        <div class="difficulty-buttons">
+          <button class="diff-btn active" data-level="easy">
+            🌱 Easy
+            <span class="diff-desc">Small numbers · 20s</span>
+          </button>
+          <button class="diff-btn" data-level="medium">
+            🔥 Medium
+            <span class="diff-desc">Larger numbers · 15s</span>
+          </button>
+          <button class="diff-btn" data-level="hard">
+            ⚡ Hard
+            <span class="diff-desc">3 numbers · 12s</span>
+          </button>
+        </div>
+      </div>
+
+      <button id="start-btn" class="btn btn-primary pulse">▶ Start Game</button>
+
+      <div class="high-score-display">
+        🏆 Best Score: <span id="high-score-value">0</span>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard-section">
+        <div class="leaderboard-header">
+          <span class="section-label" style="margin:0">🏅 Top Scores</span>
+          <button id="clear-scores-btn" class="clear-btn" title="Clear all scores">🗑</button>
+        </div>
+        <ul id="leaderboard-list" class="leaderboard-list">
+          <li class="lb-empty">No scores yet — play a round!</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       GAME SCREEN
+  ====================================================== -->
+  <div id="game-screen" class="screen">
+
+    <!-- Daily challenge label (shown only during daily) -->
+    <div id="daily-challenge-label" class="daily-challenge-label hidden">
+      📅 Daily Challenge
+    </div>
+
+    <!-- HUD bar -->
+    <div class="hud">
+      <div class="hud-item">
+        <span class="hud-icon">⭐</span>
+        <span id="score-display">0</span>
+      </div>
+      <div class="hud-item level-badge" id="level-badge">Easy</div>
+      <!-- Lives rendered as heart emojis by JS -->
+      <div class="hud-item" id="lives-display">❤️❤️❤️</div>
+      <div class="hud-item">
+        <span class="hud-icon">🪙</span>
+        <span id="coins-display">0</span>
+      </div>
+      <button id="pause-btn" class="icon-btn" title="Pause">⏸</button>
+    </div>
+
+    <!-- Question progress bar -->
+    <div class="progress-bar">
+      <div id="progress-bar-fill" class="progress-bar-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Streak banner -->
+    <div id="streak-banner" class="streak-banner hidden">
+      🔥 <span id="streak-count">0</span> in a row!
+    </div>
+
+    <!-- Question card -->
+    <div class="question-card">
+
+      <!-- Countdown timer ring -->
+      <div class="timer-container">
+        <svg class="timer-ring" viewBox="0 0 80 80">
+          <circle class="timer-bg"       cx="40" cy="40" r="34"/>
+          <circle class="timer-progress" cx="40" cy="40" r="34" id="timer-circle"/>
+        </svg>
+        <span id="timer-text" class="timer-text">15</span>
+      </div>
+
+      <p class="question-number">Question <span id="q-number">1</span> / 10</p>
+
+      <!-- Hard mode hint — only visible on hard -->
+      <div id="hard-hint" class="hard-hint hidden">
+        🥷 The <strong>first</strong> operation is shown. Guess the <strong>?</strong>
+      </div>
+
+      <!-- Number chips + operation placeholders (populated by JS) -->
+      <div class="question-display" id="question-display"></div>
+
+      <!-- Result -->
+      <div class="result-display">
+        <span class="equals-sign">=</span>
+        <span class="result-value" id="result-value">?</span>
+      </div>
+
+      <!-- Feedback message -->
+      <div id="feedback" class="feedback hidden"></div>
+    </div>
+
+    <!-- Operation answer buttons -->
+    <div class="operations-grid" id="operations-grid">
+      <button class="op-btn" data-op="+">
+        <span class="op-symbol">+</span>
+        <span class="op-name">Addition</span>
+      </button>
+      <button class="op-btn" data-op="-">
+        <span class="op-symbol">−</span>
+        <span class="op-name">Subtraction</span>
+      </button>
+      <button class="op-btn" data-op="*">
+        <span class="op-symbol">×</span>
+        <span class="op-name">Multiplication</span>
+      </button>
+      <button class="op-btn" data-op="/">
+        <span class="op-symbol">÷</span>
+        <span class="op-name">Division</span>
+      </button>
+    </div>
+
+    <!-- Next / See Results button -->
+    <button id="next-btn" class="btn btn-secondary hidden">Next Question ➡</button>
+
+    <!-- Earned badges row -->
+    <div id="achievements-row" class="achievements-row"></div>
+
+  </div>
+
+  <!-- =====================================================
+       RESULTS SCREEN
+  ====================================================== -->
+  <div id="results-screen" class="screen">
+    <div class="results-card">
+
+      <div id="results-emoji"  class="results-emoji">🥷</div>
+      <h2 id="results-title"   class="results-title">Game Over!</h2>
+      <p  id="results-message" class="results-message"></p>
+
+      <div class="results-stats">
+        <div class="stat-box">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-label">Score</span>
+          <span class="stat-value" id="final-score">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-icon">✅</span>
+          <span class="stat-label">Correct</span>
+          <span class="stat-value" id="final-correct">0/10</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-icon">🔥</span>
+          <span class="stat-label">Best Streak</span>
+          <span class="stat-value" id="final-streak">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-icon">🪙</span>
+          <span class="stat-label">Coins</span>
+          <span class="stat-value" id="final-coins">0</span>
+        </div>
+      </div>
+
+      <!-- Badges earned this round -->
+      <div id="badges-earned" class="badges-earned"></div>
+
+      <!-- New high score banner -->
+      <div id="new-high-score" class="new-high-score hidden">🏆 New High Score!</div>
+
+      <div class="results-buttons">
+        <button id="play-again-btn"   class="btn btn-primary">🔄 Play Again</button>
+        <button id="change-level-btn" class="btn btn-outline">🎯 Change Level</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       PAUSE OVERLAY
+  ====================================================== -->
+  <div id="pause-overlay" class="overlay hidden">
+    <div class="overlay-card">
+      <h2>⏸ Paused</h2>
+      <p>Take a breath, Ninja!</p>
+      <button id="resume-btn" class="btn btn-primary">▶ Resume</button>
+      <button id="quit-btn"   class="btn btn-outline">🏠 Quit to Menu</button>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       ACHIEVEMENT TOAST
+  ====================================================== -->
+  <div id="achievement-toast" class="achievement-toast hidden">
+    <span id="toast-icon">🏅</span>
+    <div>
+      <strong id="toast-title">Achievement Unlocked!</strong>
+      <p id="toast-desc"></p>
+    </div>
+  </div>
+
+  <!-- Scripts — load order matters -->
+  <script src="js/sounds.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
